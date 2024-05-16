@@ -2,6 +2,7 @@
 require_once "config/conexion.php";
 require_once "config/config.php";
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,6 +142,7 @@ require_once "config/config.php";
     <script>
         function convertir() {
             // Obtener el valor ingresado en el input
+            //siiiiii
             var usd = parseFloat(document.getElementById('usdInput').value);
 
             // Tasa de cambio USD a CLP (ejemplo, puedes cambiar este valor por el actual)
