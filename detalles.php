@@ -1,4 +1,6 @@
 <?php require_once "config/conexion.php"; ?>
+<?php require_once "config/config.php"; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,6 +44,7 @@
         </nav>
     </div>
 </body>
+
 
 </header>
 
