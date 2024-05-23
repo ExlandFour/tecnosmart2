@@ -46,7 +46,6 @@
 </body>
 
 
-</header>
 
 </footer>
     <!-- Bootstrap core JS-->

@@ -104,7 +104,7 @@
     <!-- Footer-->
     <footer class="py-5 bg-secondary">
     <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p>
+        <p class="m-0 text-center text-white">Derechos Reservados Marcelo Quinchagual &copy; Pagina Creada desde el 10 de mayo</p>
     </div>
 </footer>
     <!-- Bootstrap core JS-->
