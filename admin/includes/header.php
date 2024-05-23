@@ -66,7 +66,7 @@ if (empty($_SESSION['id'])) {
 
             <li class="nav-item">
                 <a class="nav-link" href="pedidos.php">
-                    <i class="fas fa-list"></i>
+                    <i class="fa-solid fa-clipboard-list"></i>"></i>
                     <span>Pedidos</span></a>
             </li>
 
