@@ -59,9 +59,11 @@ while ($data = mysqli_fetch_assoc($query)) { ?>
         <td><?php echo $data['categoria']; ?></td>
         <td>
             <form method="post" action="eliminar.php?accion=pro&id=<?php echo $data['id']; ?>" class="d-inline eliminar">
-                <button class="btn btn-danger" type="submit">Eliminar</button>    
+                <button class="btn btn-danger" type="submit"><i class="fa-solid fa-trash"></i></button>    
             </form>
-                <button class="btn btn-info" type="button" onclick="editar(<?php echo $data['id']; ?>)">Editar</button>
+            <button class="btn btn-info" type="button" onclick="editar(<?php echo $data['id']; ?>)">
+                <i class="fa-regular fa-pen-to-square"></i>
+            </button>
         </td>
     </tr>
 <?php } ?>
@@ -173,7 +175,10 @@ while ($data = mysqli_fetch_assoc($query)) { ?>
     }
 
 </script>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+</head>
 <?php
 
 ?>

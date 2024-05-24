@@ -17,7 +17,7 @@ if (empty($_SESSION['id'])) {
 
     <!-- Custom fonts for this template-->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
     <!-- Custom styles for this template-->
     <link href="../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -29,25 +29,24 @@ if (empty($_SESSION['id'])) {
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">Tienda <sup>Online</sup></div>
-            </a>
+<!-- Sidebar - Brand -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">
+        <img src="https://i.imgur.com/9tfLHB6.png" alt="Logo de TecnoSmart" class="img-fluid" style="max-height: 50px;">
+    </a>
+</nav>
+<!-- Divider -->
+<hr class="sidebar-divider my-0">
 
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+<!-- Nav Item - Dashboard -->
+<li class="nav-item active">
+    <a class="nav-link" href="index.html">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Menús</span></a>
+</li>
 
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Menús</span></a>
-            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -66,7 +65,7 @@ if (empty($_SESSION['id'])) {
 
             <li class="nav-item">
                 <a class="nav-link" href="pedidos.php">
-                    <i class="fa-solid fa-clipboard-list"></i>"></i>
+                <i class="fas fa-solid fa-receipt"></i>
                     <span>Pedidos</span></a>
             </li>
 
