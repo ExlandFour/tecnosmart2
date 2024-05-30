@@ -30,6 +30,43 @@ require_once "config/config.php";
         </div>
     </nav>
 
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+        function convertir() {
+            // Obtener el valor ingresado en el input
+            //siiiiii
+            var usd = parseFloat(document.getElementById('usdInput').value);
+
+            // Tasa de cambio USD a CLP (ejemplo, puedes cambiar este valor por el actual)
+            var tasaCambio = 850; // 1 USD = 850 CLP
+
+            // Calcular el equivalente en CLP
+            var clp = usd * tasaCambio;
+
+            // Mostrar el resultado
+            document.getElementById('resultado').innerText = usd + ' USD equivale a ' + clp.toFixed(2) + ' CLP';
+        }
+    </script>
+
+
+
+
+
+
+
+
+
+
     <!-- Header-->
     <header class="bg-dark py-5">
         <div class="container px-4 px-lg-5 my-5">
@@ -81,22 +118,6 @@ require_once "config/config.php";
 
 
 
-    <script>
-        function convertir() {
-            // Obtener el valor ingresado en el input
-            //siiiiii
-            var usd = parseFloat(document.getElementById('usdInput').value);
-
-            // Tasa de cambio USD a CLP (ejemplo, puedes cambiar este valor por el actual)
-            var tasaCambio = 850; // 1 USD = 850 CLP
-
-            // Calcular el equivalente en CLP
-            var clp = usd * tasaCambio;
-
-            // Mostrar el resultado
-            document.getElementById('resultado').innerText = usd + ' USD equivale a ' + clp.toFixed(2) + ' CLP';
-        }
-    </script>
 
 
 
