@@ -76,6 +76,32 @@ require_once "config/config.php";
             <p class="m-0 text-center text-white">Copyright &copy; Your Website <?php echo date("Y"); ?></p>
         </div>
     </footer>
+
+
+
+
+
+    <script>
+        function convertir() {
+            // Obtener el valor ingresado en el input
+            //siiiiii
+            var usd = parseFloat(document.getElementById('usdInput').value);
+
+            // Tasa de cambio USD a CLP (ejemplo, puedes cambiar este valor por el actual)
+            var tasaCambio = 850; // 1 USD = 850 CLP
+
+            // Calcular el equivalente en CLP
+            var clp = usd * tasaCambio;
+
+            // Mostrar el resultado
+            document.getElementById('resultado').innerText = usd + ' USD equivale a ' + clp.toFixed(2) + ' CLP';
+        }
+    </script>
+
+
+
+
+
     
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -139,20 +165,5 @@ require_once "config/config.php";
     <button onclick="convertir()">Convertir</button>
     <p id="resultado"></p>
 
-    <script>
-        function convertir() {
-            // Obtener el valor ingresado en el input
-            //siiiiii
-            var usd = parseFloat(document.getElementById('usdInput').value);
-
-            // Tasa de cambio USD a CLP (ejemplo, puedes cambiar este valor por el actual)
-            var tasaCambio = 850; // 1 USD = 850 CLP
-
-            // Calcular el equivalente en CLP
-            var clp = usd * tasaCambio;
-
-            // Mostrar el resultado
-            document.getElementById('resultado').innerText = usd + ' USD equivale a ' + clp.toFixed(2) + ' CLP';
-        }
-    </script>
+    
 </html>
