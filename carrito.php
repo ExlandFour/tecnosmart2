@@ -1,6 +1,52 @@
 <?php 
 require_once "config/conexion.php";
 require_once "config/config.php";
+
+// Inicializar las variables $id y $token
+$id = $token = "";
+
+// Verificar si se han enviado los datos del formulario
+if (isset($_POST['id'], $_POST['token'])) {
+    $id = $_POST['id'];
+    $token = $_POST['token'];
+}
+
+// Verificar si la sesión 'carrito' está iniciada
+if (!isset($_SESSION['carrito'])) {
+    $_SESSION['carrito'] = array('productos' => array());
+}
+
+$datos = array();
+
+// Verificar si las variables están definidas antes de usarlas
+if (!empty($id) && !empty($token)) {
+    // Calcula el token temporal
+    $token_tmp = hash_hmac('sha1', $id, KEY_TOKEN);
+
+    // Verifica si los tokens coinciden
+    if ($token === $token_tmp) {
+        if (isset($_SESSION['carrito']['productos'][$id])) {
+            $_SESSION['carrito']['productos'][$id] += 1;
+        } else {
+            $_SESSION['carrito']['productos'][$id] = 1;
+        }
+
+        $datos['numero'] = count($_SESSION['carrito']['productos']);
+        $datos['ok'] = true;
+    } else {
+        // Si los tokens no coinciden, establece 'ok' como false
+        $datos['ok'] = false;
+    }
+} else {
+    // Si los datos 'id' y 'token' no están seteados, establece 'ok' como false
+    $datos['ok'] = false;
+}
+
+// Envía la respuesta JSON
+echo json_encode($datos);
+?>
+
+
 ?>
 
 <!DOCTYPE html>
@@ -18,6 +64,10 @@ require_once "config/config.php";
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="assets/css/styles.css" rel="stylesheet" />
     <link href="assets/css/estilos.css" rel="stylesheet" />
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AfexrJxw5h5RVjGWG_xxnsT0JrMljttr-V_GYkNybamoRcDQfLYycAj8dr5KFJO2Z1mG2A65cwP-zvF6&currency=USD">
+    </script>
+
 </head>
 <body>
     <!-- Navigation-->
@@ -76,6 +126,7 @@ require_once "config/config.php";
             <p class="m-0 text-center text-white">Copyright &copy; Your Website <?php echo date("Y"); ?></p>
         </div>
     </footer>
+
     
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -124,13 +175,44 @@ require_once "config/config.php";
         });
     </script>
     
-    <!-- Script para inicializar el botón de PayPal -->
+    <body>
+        <div id= "paypal-button-container"></div>
     <script>
-        function initPayPalButton() {
-            paypal.Buttons().render('#paypal-button-container');
-        }
+            paypal.Buttons({
+                style:{
+                    color: 'blue',
+                    shape: 'pill',
+                    label: 'pay'
+                },
+                createOrder: function(data, actions){
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value:100
+                        }
+                    }]
+                })
+            },
+
+            onApprove: function(data, actions){
+                actions.order.capture().then(function (detalles){
+                    window.location.href="completado.php"
+                });
+
+
+            },
+
+            onCancel: function(data){
+                alert("¡Pago Cancelado!")
+                console.log(data);
+            }
+            }).render('#paypal-button-container');
+
     </script>
-    <script src="https://www.paypal.com/sdk/js?client-id=AaZLiLPbSW2QaxJxtZ6pJrS4iYzHucSguFks9vtGFtnFRYMgWZmLyMaNw3QdbrqojWHz9YsrL0LfUAvL&currency=USD" onload="initPayPalButton()"></script>
+
+
+ 
+
 </body>
 
 <h1>Conversor de USD a CLP</h1>

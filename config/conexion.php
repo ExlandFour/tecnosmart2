@@ -1,12 +1,24 @@
 <?php
-    $host = "localhost";
-    $user = "root";
-    $clave = "";
-    $bd = "card";
-    $conexion = mysqli_connect($host,$user,$clave,$bd);
-    if (mysqli_connect_errno()){
-        echo "No se pudo conectar a la base de datos";
-        exit();
+
+    class Database {
+
+        private $hostname = "localhost";
+        private $database = "tecnosmart";
+        private $username = "root";
+        private $password = "";
+        private $charset = "utf8";
+    
+        function conectar() {
+    
+            try {
+                $conexion = new PDO("mysql:host=" . $this->hostname . ";dbname=" . $this->database . ";charset=" . $this->charset, $this->username, $this->password);
+                $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $conexion->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                return $conexion;
+            } catch (PDOException $e) {
+                echo "Error connecting to database: " . $e->getMessage();
+                exit;
+            }
+        }
     }
-    mysqli_select_db($conexion,$bd) or die("No se encuentra la base de datos");
-    mysqli_set_charset($conexion,"utf8");
+    

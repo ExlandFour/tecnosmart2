@@ -58,6 +58,7 @@ $(document).ready(function () {
     })
     //productos
     $('#abrirProducto').click(function () {
+        console.log('Se hizo clic en el botón "Nuevo"');
         $('#productos').modal('show');
     })
     $('.eliminar').click(function(e){
@@ -76,5 +77,3 @@ function mostrar(){
         }
     }
 }
-
-
