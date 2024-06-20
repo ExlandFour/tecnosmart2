@@ -27,6 +27,9 @@ if($id == '' || $token == ''){
             $precio_rebajado = $result['precio_rebajado'];
             $imagen = $result['imagen'];
             $modelo_3d = $result['modelo_3d'];
+
+
+            $imagen_src = 'admin/fotos/' . $imagen;
             // Aquí puedes hacer lo que necesites con los datos obtenidos
             // ...
         } else {
@@ -47,34 +50,87 @@ if($id == '' || $token == ''){
     <meta name="author" content="" />
     <title>Carrito de Compras</title>
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="assets/icono.ico" />
     <!-- Bootstrap CSS-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="assets/css/styles.css" rel="stylesheet" />
     <link href="assets/css/estilos.css" rel="stylesheet" />
+    <link href="assets/css/app.css" rel="stylesheet"/>
+    <script defer src="assets/js/app.js"></script>
 
     <style>
         .custom-card {
-            max-width: 1000px;
-            margin: auto; /* Center the card horizontally */
-            height: 400px; /* Control the height of the card */
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
-        .custom-card .row {
-            height: 100%; /* Ensure the row takes the full height of the card */
+
+        .custom-card:hover {
+            transform: translateY(-5px);
         }
+
+        .custom-card img {
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+            object-fit: cover;
+            height: 100%;
+        }
+
         .custom-card .card-body {
-            color: black; /* Text color to black */
             display: flex;
             flex-direction: column;
             justify-content: center;
+            min-height: 55vh; 
         }
-        .custom-card img {
-            height: 100%; /* Ensure the image takes the full height of the card */
-            width: 100%; /* Ensure the image takes the full width of its container */
-            object-fit: cover; /* Ensures the image covers the area without distortion */
-            border-top-left-radius: calc(.25rem - 1px); /* Adjust border radius for Bootstrap */
-            border-bottom-left-radius: calc(.25rem - 1px); /* Adjust border radius for Bootstrap */
+
+        .custom-card .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .custom-card .card-text {
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .custom-card .card-text small {
+            font-size: 1.1rem;
+            color: #e74c3c;
+        }
+
+        .custom-card .btn {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 50px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .custom-card .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+
+        .custom-card .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .custom-card .btn-outline-primary {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .custom-card .btn-outline-primary:hover {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .custom-card .btn i {
+            margin-right: 10px;
         }
         .navbar {
             border-bottom: 2px solid black; /* Add a black border only to the bottom of the navbar */
@@ -83,16 +139,16 @@ if($id == '' || $token == ''){
 
 </head>
 <body class="bg-dark">
-    <a href="#" class="btn-flotante" id="btnCarrito">Carrito <span class="badge bg-success" id="carrito">0</span></a>
+
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img src="https://i.imgur.com/9tfLHB6.png" alt="Logo de TecnoSmart" style="max-height: 38px;"></a>
+            <a class="navbar-brand" href="./"><img src="https://i.imgur.com/9tfLHB6.png" alt="Logo de TecnoSmart" style="max-height: 70px;"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-4 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link text-info" href="#" category="all">Todo</a>
                     </li>
@@ -114,35 +170,68 @@ if($id == '' || $token == ''){
                         </li>
                     <?php } ?>
                 </ul>
+                <a href="#" class="btn btn-primary" id="btnCarrito">Carrito <span class="badge bg-secondary" id="carrito">0</span></a>
+
             </div>
         </div>
     </nav>
 
     <div class="container mt-5">
-        <div class="card custom-card text-dark bg-white mb-3">
-            <div class="row no-gutters h-100">
-                <div class="col-md-6">
-                    <img src="admin/fotos/<?php echo htmlspecialchars($imagen); ?>" class="card-img" alt="<?php echo htmlspecialchars($nombre); ?>">
+    <div class="card custom-card text-dark bg-white p-5">
+        <div class="row no-gutters">
+            <!-- Primera columna (col-md-6) -->
+            <div class="col-md-6">
+                <div class="contenedor">
+                    <ul class="ul">
+                        <li class="li activo">Imagen Referencial</li>
+                        <li class="li">Modelo 3d</li>
+                    </ul>
+
+                    <div class="subcontenedor">
+                        <div class="bloque activo mb-2">
+                            <?php if (!empty($imagen_src)): ?>
+                                <img src="<?php echo $imagen_src; ?>" alt="Imagen desde base de datos">
+                            <?php else: ?>
+                                <p>No se encontró ninguna imagen</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="bloque">
+                            <?php if (!empty($modelo_3d)): ?>
+                                <?php echo $modelo_3d; // Mostrar directamente el contenido del modelo_3d ?>
+                            <?php else: ?>
+                                <p>No se encontró un modelo 3D para mostrar.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card-body">
-                        <h5 class="card-title"><?php echo htmlspecialchars($nombre); ?></h5>
-                        <p class="card-text"><?php echo htmlspecialchars($descripcion); ?></p>
-                        <p class="card-text"><small>Precio Rebajado: <?php echo htmlspecialchars($precio_rebajado); ?></small></p>
+            </div> 
 
-                        <div class="text-center">
+            <!-- Segunda columna (col-md-6) -->
+            <div class="col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo htmlspecialchars($nombre); ?></h5>
+                    <p class="card-text"><?php echo htmlspecialchars($descripcion); ?></p>
+                    <p class="card-text"><small>Precio Rebajado: <?php echo htmlspecialchars($precio_rebajado); ?></small></p>
 
-                        </div>
+                    <div class="text-center">
+          
+                    </div>
 
-                        <div class="text-center">
-                            <button class="btn btn-primary" type="button">comprar ahora</button>
-                            <button class="btn btn-outline-primary" type="button" onclick="addProducto(<?php echo $id; ?>, '<?php echo $token_tmp; ?>')" >Agregar al carrito </button>
-                        </div>
+                    <div class="text-center">
+                    <button class="btn btn-primary" type="button" onclick="window.location.href='carrito1.php'">Comprar ahora</button>
+                    <button class="btn btn-outline-primary mt-auto agregar" data-id="<?php echo htmlspecialchars($id); ?>" href="#">Agregar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div> 
+
+    <footer class="py-5 bg-secondary mt-5 ">
+        <div class="container mb-">
+            <p class="m-0 text-center text-white">Derechos Reservados Marcelo Quinchagual &copy; Pagina Creada desde el 10 de mayo</p>
+        </div>
+    </footer>
 
     <!-- JS and Bootstrap scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -152,6 +241,8 @@ if($id == '' || $token == ''){
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script src="assets/js/scripts.js"></script>
+    <script defer src="assets/js/app.js"></script>
+
 
     <script>
         function addProducto(id, token){
@@ -167,6 +258,7 @@ if($id == '' || $token == ''){
             }).then(response => response.json())
         }
     </script>
+<script src="//code.tidio.co/zyujhh3zfwxwmfo8nr0cxfnzlodkxyce.js" async></script>
 
 </body>
 </html>

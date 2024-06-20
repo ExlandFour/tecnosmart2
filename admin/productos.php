@@ -1,6 +1,6 @@
 <?php
 require_once "../config/conexion.php";
- 
+
 // Crear una instancia de la clase Database
 $db = new Database();
 // Llamar al método conectar para obtener la conexión
@@ -11,8 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cantidad = $_POST['cantidad'];
     $descripcion = $_POST['descripcion'];
     $p_normal = $_POST['p_normal'];
-    $p_rebajado = $_POST['p_rebajado'];
+    $p_rebajado = !empty($_POST['p_rebajado']) ? $_POST['p_rebajado'] : 0; // Verificación para precio rebajado
     $categoria = $_POST['categoria'];
+    $modelo_3d = $_POST['modelo_3d'];
     $id = isset($_POST['id']) ? $_POST['id'] : null;
 
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($id) {
         // Actualizar producto existente
-        $sql = "UPDATE productos SET nombre = :nombre, descripcion = :descripcion, precio_normal = :p_normal, precio_rebajado = :p_rebajado, cantidad = :cantidad, id_categoria = :categoria";
+        $sql = "UPDATE productos SET nombre = :nombre, descripcion = :descripcion, precio_normal = :p_normal, precio_rebajado = :p_rebajado, cantidad = :cantidad, id_categoria = :categoria, modelo_3d = :modelo_3d";
         if ($foto) {
             $sql .= ", imagen = :foto";
         }
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query->bindParam(':id', $id);
     } else {
         // Insertar nuevo producto
-        $sql = "INSERT INTO productos(nombre, descripcion, precio_normal, precio_rebajado, cantidad, imagen, id_categoria) VALUES (:nombre, :descripcion, :p_normal, :p_rebajado, :cantidad, :foto, :categoria)";
+        $sql = "INSERT INTO productos(nombre, descripcion, precio_normal, precio_rebajado, cantidad, imagen, modelo_3d, id_categoria) VALUES (:nombre, :descripcion, :p_normal, :p_rebajado, :cantidad, :foto, :modelo_3d, :categoria)";
         $query = $conexion->prepare($sql);
     }
 
@@ -48,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query->bindParam(':p_normal', $p_normal);
     $query->bindParam(':p_rebajado', $p_rebajado);
     $query->bindParam(':cantidad', $cantidad);
+    $query->bindParam(':modelo_3d', $modelo_3d);
     if ($foto) {
         $query->bindParam(':foto', $foto);
     }
@@ -62,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include("includes/header.php");
 ?>
-
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Productos</h1>
     <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="abrirProducto"><i class="fas fa-plus fa-sm text-white-50"></i> Nuevo</a>
@@ -80,6 +81,7 @@ include("includes/header.php");
                         <th>Precio Normal</th>
                         <th>Precio Rebajado</th>
                         <th>Cantidad</th>
+                        <th>Modelo3D</th>
                         <th>Categoria</th>
                         <th>Acciones</th>
                     </tr>
@@ -101,6 +103,7 @@ include("includes/header.php");
                             <td><?php echo $data['precio_normal']; ?></td>
                             <td><?php echo $data['precio_rebajado']; ?></td>
                             <td><?php echo $data['cantidad']; ?></td>
+                            <td><?php echo htmlspecialchars(substr($data['modelo_3d'], 0, 50)); ?></td>
                             <td><?php echo $data['categoria']; ?></td>
                             <td>
                                 <form method="post" action="eliminar.php?accion=pro&id=<?php echo $data['id']; ?>" class="d-inline eliminar">
@@ -146,8 +149,9 @@ include("includes/header.php");
                     </div>
                     <div class="form-group">
                         <label for="p_rebajado">Precio Rebajado</label>
-                        <input type="number" class="form-control" id="p_rebajado" name="p_rebajado" required>
+                        <input type="number" class="form-control" id="p_rebajado" name="p_rebajado">
                     </div>
+
                     <div class="form-group">
                         <label for="cantidad">Cantidad</label>
                         <input type="number" class="form-control" id="cantidad" name="cantidad" required>
@@ -155,6 +159,10 @@ include("includes/header.php");
                     <div class="form-group">
                         <label for="foto">Foto</label>
                         <input type="file" class="form-control" id="foto" name="foto">
+                    </div>
+                    <div class="form-group">
+                        <label for="modelo_3d">Modelo3D</label>
+                        <textarea class="form-control" id="modelo_3d" name="modelo_3d" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="categoria">Categoría</label>
@@ -175,15 +183,12 @@ include("includes/header.php");
 
 <?php include("includes/footer.php"); ?>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
+
 
 <script>
     document.getElementById('abrirProducto').addEventListener('click', function() {
@@ -195,6 +200,7 @@ include("includes/header.php");
     });
 
     function editar(id) {
+        $('#productos').modal('show');
         console.log('este es el id ' + id);
     $.post('modificar.php', { id: id }, function(data) {
         if (data.error) {
@@ -207,11 +213,15 @@ include("includes/header.php");
         $('#nombre').val(data.nombre);
         $('#descripcion').val(data.descripcion);
         $('#p_normal').val(data.precio_normal); // Suponiendo que 'p_normal' es el campo para el precio normal
-        $('#productos').modal('show');
+        $('#p_rebajado').val(data.precio_rebajado);
+        $('#cantidad').val(data.cantidad);
+        $('#foto').val(data.foto);
+        $('#modelo_3d').val(data.modelo_3d);
+        $('#categorias').val(data.categoria);
     }, 'json')
     .fail(function(xhr, textStatus, errorThrown) {
         alert('Error en la solicitud: ' + errorThrown);
-        
+  
     });
     }
 

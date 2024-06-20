@@ -1,6 +1,15 @@
 <?php
 require_once "../config/conexion.php";
 include("includes/header.php");
+
+$db = new Database();
+// Conectar a la base de datos y obtener la conexión
+$conexion = $db->conectar();
+
+// Preparar y ejecutar la consulta
+$query = $conexion->prepare("SELECT c.c_id, c.c_nombre, c.c_apellido, c.c_direccion, c.c_rut, p.nombre AS nombre, p.imagen AS imagen FROM cliente c INNER JOIN productos p ON p.id = c.id_producto ORDER BY c.c_id DESC");
+$query->execute();
+$results = $query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -15,24 +24,22 @@ include("includes/header.php");
                         <th>Id</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
-                        <th>Direccion</th>
+                        <th>Dirección</th>
                         <th>Rut</th>
                         <th>Producto</th>
                         <th>Imagen</th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                $query = mysqli_query($conexion, "SELECT c.c_id, c.c_nombre, c.c_apellido, c.c_direccion, c.c_rut, p.nombre AS nombre, p.imagen AS imagen FROM cliente c INNER JOIN productos p ON p.id = c.id_producto ORDER BY c.c_id DESC");
-                while ($data = mysqli_fetch_assoc($query)) { ?>
+                <?php foreach ($results as $data) { ?>
                     <tr>
-                        <td><?php echo $data['c_id']; ?></td>
-                        <td><?php echo $data['c_nombre']; ?></td>
-                        <td><?php echo $data['c_apellido']; ?></td>
-                        <td><?php echo $data['c_direccion']; ?></td>
-                        <td><?php echo $data['c_rut']; ?></td>
-                        <td><?php echo $data['nombre']; ?></td>
-                        <td><img class="img-thumbnail" src="fotos/<?php echo $data['imagen']; ?>" width="50"></td>
+                        <td><?php echo htmlspecialchars($data['c_id']); ?></td>
+                        <td><?php echo htmlspecialchars($data['c_nombre']); ?></td>
+                        <td><?php echo htmlspecialchars($data['c_apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($data['c_direccion']); ?></td>
+                        <td><?php echo htmlspecialchars($data['c_rut']); ?></td>
+                        <td><?php echo htmlspecialchars($data['nombre']); ?></td>
+                        <td><img class="img-thumbnail" src="fotos/<?php echo htmlspecialchars($data['imagen']); ?>" width="50"></td>
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -41,9 +48,6 @@ include("includes/header.php");
     </div>
 </div>
 
-<!-- Este bloque debería estar en el header.php o en el footer.php según corresponda -->
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-
-<?php include("includes/footer.php"); ?>
+<?php
+include("includes/footer.php");
+?>

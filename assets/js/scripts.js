@@ -45,7 +45,7 @@ $(document).ready(function () {
         mostrar();
     })
     $('#btnCarrito').click(function(e){
-        $('#btnCarrito').attr('href','carrito.php');
+        $('#btnCarrito').attr('href','carrito1.php');
     })
     $('#btnVaciar').click(function(){
         localStorage.removeItem("productos");

@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Carrito de Compras</title>
+    <title>TecnoSmart</title>
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="assets/icono.ico" />
     <!-- Bootstrap CSS-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Core theme CSS -->
@@ -29,7 +29,6 @@
     $conexion = $db->conectar();
     ?>
 
-    <a href="#" class="btn-flotante" id="btnCarrito">Carrito <span class="badge bg-success" id="carrito">0</span></a>
 
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -51,6 +50,9 @@
                     }
                     ?>
                 </ul>
+   
+                <a href="#" class="btn btn-primary" id="btnCarrito">Carrito <span class="badge bg-secondary" id="carrito">0</span></a>
+   
             </div>
         </div>
     </nav>
@@ -73,6 +75,8 @@
                 $query = $conexion->query("SELECT p.*, c.id AS id_cat, c.categoria FROM productos p INNER JOIN categorias c ON c.id = p.id_categoria");
                 $productos = $query->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($productos as $producto) {
+                    $id = $producto['id'];
+                    $token_tmp = hash_hmac('sha1', $producto['id'], KEY_TOKEN);
                     echo '<div class="col mb-5 productos" category="' . $producto['categoria'] . '">
                             <div class="card h-100">
                                 <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">' . ($producto['precio_normal'] > $producto['precio_rebajado'] ? 'Oferta' : '') . '</div>
@@ -91,8 +95,10 @@
                                     </div>
                                 </div>
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto agregar" data-id="' . $producto['id'] . '" href="#">Agregar</a>
-                                    <a href="detalles.php?id=' . $producto['id'] . '&token=' . hash_hmac('sha1', $producto['id'], KEY_TOKEN) . '" class="btn btn-primary">Detalles</a></div>
+                                    <div class="text-center">
+                                        <a class="btn btn-outline-dark mt-auto agregar" data-id="' . $producto['id'] . '" href="#">Agregar</a>
+                                        <a href="detalles.php?id=' . $producto['id'] . '&token=' . hash_hmac('sha1', $producto['id'], KEY_TOKEN) . '" class="btn btn-primary">Detalles</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>';
@@ -114,5 +120,27 @@
     <!-- Core theme JS -->
     <script src="assets/js/jquery-3.6.0.min.js"></script>
     <script src="assets/js/scripts.js"></script>
+
+    <script>
+        function addProducto(id, token){
+            let url = 'clases/carrito.php'
+            let formData = new FormData()
+            formData.append('id', id)
+            formData.append('token', token)
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                mode: 'cors'
+            }).then(response => response.json())
+            .then(data =>{
+                if(data.ok){
+                    let elemento = document.getElementById("num_cart")
+                    elemento.innerHTML = data.numero
+                }
+            })
+        }
+    </script>
+
 </body>
 </html>

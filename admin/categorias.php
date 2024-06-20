@@ -1,14 +1,24 @@
 <?php
 require_once "../config/conexion.php";
-if (isset($_POST)) {
-    if (!empty($_POST)) {
+
+// Crear una instancia de la clase Database y obtener la conexión
+$db = new Database();
+$conexion = $db->conectar();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!empty($_POST['nombre'])) {
         $nombre = $_POST['nombre'];
-        $query = mysqli_query($conexion, "INSERT INTO categorias(categoria) VALUES ('$nombre')");
-        if ($query) {
+        $stmt = $conexion->prepare("INSERT INTO categorias(categoria) VALUES (:nombre)");
+        $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
+        if ($stmt->execute()) {
             header('Location: categorias.php');
+            exit;
+        } else {
+            echo "Error: No se pudo insertar la categoría.";
         }
     }
 }
+
 include("includes/header.php");
 ?>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -23,21 +33,29 @@ include("includes/header.php");
                     <tr>
                         <th>Id</th>
                         <th>Nombre</th>
-                        <th></th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $query = mysqli_query($conexion, "SELECT * FROM categorias ORDER BY id DESC");
-                    while ($data = mysqli_fetch_assoc($query)) { ?>
+                    $stmt = $conexion->prepare("SELECT * FROM categorias ORDER BY id DESC");
+                    $stmt->execute();
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($result as $data) { ?>
                         <tr>
-                            <td><?php echo $data['id']; ?></td>
-                            <td><?php echo $data['categoria']; ?></td>
+                            <td><?php echo htmlspecialchars($data['id']); ?></td>
+                            <td><?php echo htmlspecialchars($data['categoria']); ?></td>
                             <td>
-                            <form method="post" action="actualizar.php?accion=cli&id=<?php echo $data['id']; ?>" class="d-inline actualizar">
-                            <input type="hidden" name="id" value="<?php echo $data['id']; ?>">
-                            <button class="btn btn-primary" type="submit">Actualizar</button>
-                            </form>
+                                <button class="btn btn-info" type="button" onclick="editar(<?php echo $data['id']; ?>)">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+
+                                <form method="get" action="eliminar.php" class="d-inline eliminar">
+                                    <input type="hidden" name="accion" value="cli">
+                                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($data['id']); ?>">
+                                    <button class="btn btn-danger" type="submit"><i class="fa-solid fa-trash"></i></button>    
+                                </form>
+
                             </td>
                         </tr>
                     <?php } ?>
@@ -68,3 +86,40 @@ include("includes/header.php");
     </div>
 </div>
 <?php include("includes/footer.php"); ?>
+
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+
+<script>
+    document.getElementById('abrirCategoria').addEventListener('click', function() {
+    $('#categorias').modal('show').on('shown.bs.modal', function () {
+        document.getElementById('nuevaCategoriaForm').reset();
+        document.getElementById('id').value = '';
+        $('#exampleModalLabel').text('Nueva Categoría');
+    });
+    });
+
+
+    function editar(id) {
+    $.post('modificar.php', { id: id }, function(data) {
+        if (data.error) {
+            alert('Error: ' + data.error);
+            return false;
+        }
+
+        $('#exampleModalLabel').text('Editar Producto');
+        $('#id').val(data.id);
+        $('#nombre').val(data.nombre);
+        $('#categorias').modal('show');
+    }, 'json')
+    .fail(function(xhr, textStatus, errorThrown) {
+        alert('Error en la solicitud: ' + errorThrown);
+        
+    });
+    }
+
+</script>
