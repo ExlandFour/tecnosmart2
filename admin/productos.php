@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
     $cantidad = $_POST['cantidad'];
     $descripcion = $_POST['descripcion'];
+    $especificaciones = $_POST['especificaciones'];
     $p_normal = $_POST['p_normal'];
     $p_rebajado = !empty($_POST['p_rebajado']) ? $_POST['p_rebajado'] : 0; // Verificación para precio rebajado
     $categoria = $_POST['categoria'];
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($id) {
         // Actualizar producto existente
-        $sql = "UPDATE productos SET nombre = :nombre, descripcion = :descripcion, precio_normal = :p_normal, precio_rebajado = :p_rebajado, cantidad = :cantidad, id_categoria = :categoria, modelo_3d = :modelo_3d";
+        $sql = "UPDATE productos SET nombre = :nombre, descripcion = :descripcion, especificaciones = :especificaciones, precio_normal = :p_normal, precio_rebajado = :p_rebajado, cantidad = :cantidad, id_categoria = :categoria, modelo_3d = :modelo_3d";
         if ($foto) {
             $sql .= ", imagen = :foto";
         }
@@ -39,13 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query->bindParam(':id', $id);
     } else {
         // Insertar nuevo producto
-        $sql = "INSERT INTO productos(nombre, descripcion, precio_normal, precio_rebajado, cantidad, imagen, modelo_3d, id_categoria) VALUES (:nombre, :descripcion, :p_normal, :p_rebajado, :cantidad, :foto, :modelo_3d, :categoria)";
+        $sql = "INSERT INTO productos(nombre, descripcion, especificaciones, precio_normal, precio_rebajado, cantidad, imagen, modelo_3d, id_categoria) VALUES (:nombre, :descripcion, :especificaciones, :p_normal, :p_rebajado, :cantidad, :foto, :modelo_3d, :categoria)";
         $query = $conexion->prepare($sql);
     }
 
     // Asignar los valores a los parámetros de la consulta
     $query->bindParam(':nombre', $nombre);
     $query->bindParam(':descripcion', $descripcion);
+    $query->bindParam(':especificaciones', $especificaciones);
     $query->bindParam(':p_normal', $p_normal);
     $query->bindParam(':p_rebajado', $p_rebajado);
     $query->bindParam(':cantidad', $cantidad);
@@ -78,6 +80,7 @@ include("includes/header.php");
                         <th>Imagen</th>
                         <th>Nombre</th>
                         <th>Descripción</th>
+                        <th>Especificaciones</th>
                         <th>Precio Normal</th>
                         <th>Precio Rebajado</th>
                         <th>Cantidad</th>
@@ -100,6 +103,7 @@ include("includes/header.php");
                             <td><img class="img-thumbnail" src="../admin/fotos/<?php echo $data['imagen']; ?>" width="50"></td>
                             <td><?php echo $data['nombre']; ?></td>
                             <td><?php echo $data['descripcion']; ?></td>
+                            <td><?php echo $data['especificaciones']; ?></td>
                             <td><?php echo $data['precio_normal']; ?></td>
                             <td><?php echo $data['precio_rebajado']; ?></td>
                             <td><?php echo $data['cantidad']; ?></td>
@@ -143,6 +147,11 @@ include("includes/header.php");
                         <label for="descripcion">Descripción</label>
                         <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="especificaciones">Especificaciones</label>
+                        <textarea class="form-control" id="especificaciones" name="especificaciones" required></textarea>
+                    </div>
+
                     <div class="form-group">
                         <label for="p_normal">Precio Normal</label>
                         <input type="number" class="form-control" id="p_normal" name="p_normal" required>
@@ -212,6 +221,7 @@ include("includes/header.php");
         $('#id').val(data.id);
         $('#nombre').val(data.nombre);
         $('#descripcion').val(data.descripcion);
+        $('#especifiaciones').val(data.especificaciones);
         $('#p_normal').val(data.precio_normal); // Suponiendo que 'p_normal' es el campo para el precio normal
         $('#p_rebajado').val(data.precio_rebajado);
         $('#cantidad').val(data.cantidad);
